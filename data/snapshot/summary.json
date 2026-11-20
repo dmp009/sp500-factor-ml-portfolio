@@ -1,0 +1,187 @@
+{
+  "metrics": {
+    "model": {
+      "months": 165,
+      "cagr": 0.12399203380278889,
+      "vol": 0.19618252597601177,
+      "sharpe": 0.6092159579096916,
+      "max_dd": 0.3122753762559054,
+      "tracking_error": 0.09096345598483177,
+      "info_ratio": -0.10602168752632257,
+      "hit_rate": 0.4727272727272727,
+      "avg_turnover": 0.6133210165034486
+    },
+    "factor_rule": {
+      "months": 165,
+      "cagr": 0.11419719506639714,
+      "vol": 0.15787251194245902,
+      "sharpe": 0.6586989699998285,
+      "max_dd": 0.2869266107819093,
+      "tracking_error": 0.09229066259852413,
+      "info_ratio": -0.27311485677811453,
+      "hit_rate": 0.4484848484848485,
+      "avg_turnover": 0.22971540417235187
+    },
+    "equal_weight": {
+      "months": 165,
+      "cagr": 0.13147001653013612,
+      "vol": 0.15338567967786088,
+      "sharpe": 0.772673520989938,
+      "max_dd": 0.26866278811948074,
+      "tracking_error": 0.055246632937485905,
+      "info_ratio": -0.18949310166865657,
+      "hit_rate": 0.4727272727272727,
+      "avg_turnover": NaN
+    },
+    "sp500tr": {
+      "months": 165,
+      "cagr": 0.1452906911253098,
+      "vol": 0.14159740515116664,
+      "sharpe": 0.9131421026399746,
+      "max_dd": 0.23867343686881992,
+      "tracking_error": 0.0,
+      "info_ratio": NaN,
+      "hit_rate": 0.0,
+      "avg_turnover": NaN
+    }
+  },
+  "attribution": {
+    "model": {
+      "alpha_annual": -0.025209577513560816,
+      "alpha_t": -1.6377162835999681,
+      "betas": {
+        "mkt_rf": 1.2004113837732528,
+        "smb": 0.12367731670898305,
+        "hml": 0.26890903608610606,
+        "rmw": -0.22060089812049516,
+        "cma": -0.037413450491696545,
+        "mom": 0.019683051009959443
+      },
+      "t_values": {
+        "mkt_rf": 23.559016925458216,
+        "smb": 1.627232195869925,
+        "hml": 3.5198423818321434,
+        "rmw": -1.8822019887199204,
+        "cma": -0.3542929049914202,
+        "mom": 0.2554371208826601
+      },
+      "r2": 0.8824405108597678,
+      "n": 164,
+      "reading": "After controlling for the five Fama-French factors and momentum, the annual alpha is -2.5% (t = -1.6), which is not statistically significant: factor exposure explains the returns. The significant tilts are value."
+    },
+    "factor_rule": {
+      "alpha_annual": -0.02428715052610905,
+      "alpha_t": -1.623475189941997,
+      "betas": {
+        "mkt_rf": 0.9293524835967095,
+        "smb": 0.16383178499352102,
+        "hml": 0.47386261758249,
+        "rmw": 0.15898971454962746,
+        "cma": 0.018645386832181497,
+        "mom": 0.2336122969274842
+      },
+      "t_values": {
+        "mkt_rf": 26.270031360112704,
+        "smb": 2.0479464137755548,
+        "hml": 5.3280857111755875,
+        "rmw": 1.3892934799609056,
+        "cma": 0.17658570847940477,
+        "mom": 3.5455758207101993
+      },
+      "r2": 0.8397871245859115,
+      "n": 164,
+      "reading": "After controlling for the five Fama-French factors and momentum, the annual alpha is -2.4% (t = -1.6), which is not statistically significant: factor exposure explains the returns. The significant tilts are size, value, momentum."
+    },
+    "sp500tr": {
+      "alpha_annual": -6.137431991053849e-05,
+      "alpha_t": -0.029899848776771258,
+      "betas": {
+        "mkt_rf": 0.9882713215649495,
+        "smb": -0.11343512323530167,
+        "hml": 0.017348183523207675,
+        "rmw": 0.04784872833636955,
+        "cma": 0.026126989145206184,
+        "mom": 0.004234060352065402
+      },
+      "t_values": {
+        "mkt_rf": 142.38563986132138,
+        "smb": -13.08294551032158,
+        "hml": 1.4969448600940831,
+        "rmw": 2.9207070515157594,
+        "cma": 1.9714202446877376,
+        "mom": 0.5755366442509007
+      },
+      "r2": 0.9967431556682075,
+      "n": 164,
+      "reading": "After controlling for the five Fama-French factors and momentum, the annual alpha is -0.0% (t = -0.0), which is not statistically significant: factor exposure explains the returns. The significant tilts are size, profitability."
+    }
+  },
+  "ic": {
+    "mean": 0.0007332963758664135,
+    "t": 0.08479644690605194,
+    "months": 165,
+    "share_positive": 0.509090909090909,
+    "top_minus_bottom_decile_monthly": 0.0013596446314810791
+  },
+  "params": {
+    "n_estimators": 300,
+    "learning_rate": 0.03,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.8,
+    "random_state": 0,
+    "verbose": -1,
+    "num_leaves": 31,
+    "min_child_samples": 100
+  },
+  "model_version": "lgbm-a10be74a",
+  "backtest": {
+    "first_month": "2013-02",
+    "last_month": "2026-10",
+    "months": 165
+  },
+  "validation_ic": -0.0318,
+  "survivorship": {
+    "n_missing": 190,
+    "share_missing": 0.2275449101796407
+  },
+  "coverage": {
+    "2010-06": 0.6633,
+    "2018-08": 0.8261,
+    "2026-10": 0.996
+  },
+  "data_through": "2026-10",
+  "universe": {
+    "securities": 835,
+    "with_cik": 626
+  },
+  "live": {},
+  "gates": [
+    [
+      "month_closed",
+      true,
+      "2026-10 ends 2026-10-31, today is 2026-11-20"
+    ],
+    [
+      "member_count",
+      true,
+      "503 members (allowed 495-510)"
+    ],
+    [
+      "price_coverage",
+      true,
+      "99.6% of members priced (min 95%)"
+    ],
+    [
+      "max_abs_return",
+      false,
+      "largest absolute monthly return 81.6% (max 80%)"
+    ],
+    [
+      "features_built",
+      true,
+      "503 feature rows for 503 members"
+    ]
+  ],
+  "flagged_series": []
+}
