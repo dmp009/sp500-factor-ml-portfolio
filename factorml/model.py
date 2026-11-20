@@ -40,6 +40,13 @@ def _ranked(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def winsorize(panel: pd.DataFrame, q: float = 0.01) -> pd.Series:
+    """Training target clipped at the q / 1-q quantiles within each month (one junk month cannot
+    dominate an L2 loss); evaluation always uses the raw target."""
+    g = panel.groupby("month")["target"]
+    return panel["target"].clip(g.transform("quantile", q), g.transform("quantile", 1 - q))
+
+
 def walk_forward(panel: pd.DataFrame, first_oos: str, params: dict, on_fit=None) -> pd.DataFrame:
     """[month, ticker, score, rank, model_version] for every month >= first_oos (expanding window).
 
@@ -52,7 +59,7 @@ def walk_forward(panel: pd.DataFrame, first_oos: str, params: dict, on_fit=None)
         test = panel[panel["month"] == m]
         if train.empty or test.empty:
             continue
-        model = fit(_X(train), train["target"], params)
+        model = fit(_X(train), winsorize(train), params)
         X_test = _X(test).set_axis(test["ticker"].to_numpy())
         out.append(pd.DataFrame({"month": m, "ticker": test["ticker"].to_numpy(), "score": model.predict(X_test)}))
         if on_fit:

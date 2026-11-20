@@ -112,3 +112,17 @@ def survivorship(members: pd.DataFrame, returns: pd.DataFrame) -> dict:
     want = set(members["ticker"])
     missing = want - set(returns["ticker"])
     return {"n_missing": len(missing), "share_missing": len(missing) / len(want)}
+
+
+def flag_implausible(returns: pd.DataFrame, members: pd.DataFrame, max_std: float = 0.4,
+                     min_big: int = 2) -> pd.DataFrame:
+    """Securities whose Yahoo series does not look like an S&P 500 stock during its member months:
+    very high volatility with repeated +/-80% months, or long runs of unchanged prices. Usually a
+    ticker Yahoo has reassigned to another instrument. Listed in the data-quality report for review.
+    """
+    j = members[["month", "ticker"]].merge(returns[["month", "ticker", "ret"]], on=["month", "ticker"])
+    g = j.dropna(subset=["ret"]).groupby("ticker")["ret"].agg(
+        n="size", std="std", big_moves=lambda r: int((r.abs() > 0.8).sum()), zero_share=lambda r: (r == 0).mean())
+    g = g[g["n"] >= 6]
+    bad = ((g["std"] > max_std) & (g["big_moves"] >= min_big)) | (g["zero_share"] > 0.2)
+    return g[bad].reset_index().sort_values("std", ascending=False).reset_index(drop=True)

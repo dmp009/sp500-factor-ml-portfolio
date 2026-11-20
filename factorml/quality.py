@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from factorml.config import SNAPSHOT, settings
+from factorml.config import SNAPSHOT, load, settings
 from factorml.prices import coverage
 
 
@@ -45,7 +45,7 @@ def enforce(month, members, returns, features, today=None) -> list[tuple[str, bo
 
 
 def report(tables: dict[str, pd.DataFrame], gate_rows: list[tuple[str, bool, str]], survivorship: dict,
-           snapshot=SNAPSHOT) -> str:
+           snapshot=SNAPSHOT, flagged: pd.DataFrame | None = None) -> str:
     """Markdown data-quality report, also written to data/snapshot/data_quality_report.md."""
     lines = ["# Data quality report", "", "## Gates (latest month)", "", "| Gate | Result | Detail |", "|---|---|---|"]
     lines += [f"| {g} | {'pass' if ok else 'FAIL'} | {d} |" for g, ok, d in gate_rows]
@@ -55,6 +55,16 @@ def report(tables: dict[str, pd.DataFrame], gate_rows: list[tuple[str, bool, str
               (f"{survivorship['n_missing']} of the tickers that were ever index members since the start have no "
               f"price on Yahoo ({survivorship['share_missing']:.1%}); they are mostly companies acquired or delisted "
               "years ago. Months where a held stock has no return are counted, not filled.")]
+    excluded = load("ticker_overrides").get("bad_yahoo_series") or {}
+    if excluded:
+        lines += ["", "## Excluded price series", "", "| Ticker | Reason |", "|---|---|"]
+        lines += [f"| {t} | {why} |" for t, why in excluded.items()]
+    if flagged is not None and len(flagged):
+        lines += ["", "## Series flagged for review", "",
+                  ("Monthly volatility over member months above 40% with repeated +/-80% months, or long runs of "
+                  "unchanged prices."), "", "| Ticker | Member months | Volatility | Moves beyond 80% |",
+                  "|---|---:|---:|---:|"]
+        lines += [f"| {r.ticker} | {r.n} | {r.std:.0%} | {r.big_moves} |" for r in flagged.itertuples()]
     text = "\n".join(lines) + "\n"
     snapshot.mkdir(parents=True, exist_ok=True)
     (snapshot / "data_quality_report.md").write_text(text, encoding="utf-8")

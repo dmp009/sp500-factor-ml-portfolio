@@ -80,3 +80,16 @@ def test_market_cap_restates_shares_for_later_splits():
     shares = pd.DataFrame({"ticker": ["AAPL"], "value": [1000.0], "period_end": [pd.Timestamp("2020-06-27")]})
     close = pd.Series({"AAPL": 125.0})
     assert p.market_cap(close, shares, splits)["AAPL"] == 500_000  # 125 * 1,000 * 4
+
+
+def test_flag_implausible_series():
+    months = pd.period_range("2015-01", periods=24, freq="M")
+    rng = np.random.default_rng(0)
+    legit = rng.normal(0.01, 0.07, 24)
+    legit[5] = 2.0  # one genuine +200% month (APA, April 2020) is not enough to flag
+    junk = np.tile([0.0, 0.0, 3.0, -0.9], 6)  # stale prices with jumps: a reused ticker
+    rets = pd.DataFrame({"month": list(months) * 2, "ticker": ["OK"] * 24 + ["BAD"] * 24,
+                         "ret": np.r_[legit, junk]})
+    members = rets[["month", "ticker"]]
+    flagged = p.flag_implausible(rets, members)
+    assert list(flagged["ticker"]) == ["BAD"]

@@ -48,3 +48,15 @@ def test_factor_rule_ranks_by_mean_rank():
     r = md.factor_rule(p).set_index("ticker")
     assert r.loc["A", "rank"] == 1 and r.loc["C", "rank"] == 3
     assert np.isclose(r.loc["B", "score"], 0.5)
+
+
+def test_training_target_is_winsorized():
+    p = synthetic()
+    p2 = p.copy()
+    i = p2.index[(p2["month"] == pd.Period("2011-03", "M"))][0]
+    p2.loc[i, "target"] = 50.0  # a junk +5,000% month
+    p3 = p.copy()
+    p3.loc[i, "target"] = 1.0  # a smaller outlier: both are clipped to the same 99th percentile
+    s2 = md.walk_forward(p2, "2012-06", FAST)
+    s3 = md.walk_forward(p3, "2012-06", FAST)
+    pd.testing.assert_series_equal(s2["score"], s3["score"])

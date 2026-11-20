@@ -12,3 +12,9 @@ renames:
   RE: EG
   BLL: BALL
   DISCA: WBD
+
+# Yahoo series that do not belong to the index member (the ticker was reassigned after a delisting).
+# Found by prices.flag_implausible and checked by hand; their prices are treated as missing.
+bad_yahoo_series:
+  CPWR: "Compuware (acquired 2014); Yahoo's CPWR is an illiquid security with stale prices and +300% jumps"
+  PARA: "Paramount Global (merged into Paramount Skydance, 2025); Yahoo's PARA history is another instrument (level ~3,400, ~0.3% monthly moves)"

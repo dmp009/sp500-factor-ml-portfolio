@@ -32,7 +32,7 @@ from factorml import portfolio as pf
 from factorml import prices as px
 from factorml import universe as un
 from factorml import warehouse as wh
-from factorml.config import RAW, ROOT, SNAPSHOT, model_params, settings
+from factorml.config import RAW, ROOT, SNAPSHOT, load, model_params, settings
 
 ERROR_FILE = RAW / "run_error.json"
 STRATEGIES = ("model", "factor_rule", "equal_weight", "sp500tr")
@@ -142,7 +142,10 @@ def _by_ticker(asof: pd.DataFrame, dim: pd.DataFrame) -> pd.DataFrame:
 
 def _price_table(daily: dict, members: pd.DataFrame, fund: pd.DataFrame, dim: pd.DataFrame,
                  upto: pd.Period) -> pd.DataFrame:
-    """[month, ticker, ret, close, mcap] up to `upto`; mcap only where the ticker is a member that month."""
+    """[month, ticker, ret, close, mcap] up to `upto`; mcap only where the ticker is a member that month.
+    Series listed under bad_yahoo_series in config/ticker_overrides.yaml are dropped (treated as missing)."""
+    bad = list(load("ticker_overrides").get("bad_yahoo_series") or {})
+    daily = {k: v.drop(columns=bad, errors="ignore") for k, v in daily.items()}
     rets = px.monthly_returns(daily["adj"])
     rets = rets[rets["month"] <= upto]
     close = daily["close"].resample("ME").last()
@@ -243,13 +246,23 @@ def _save(tables: dict, summary: dict, snapshot: Path) -> None:
 
 # ---------------------------------------------------------------- backfill
 
+STATE = RAW / "backfill_state.pkl"
+
+
 def backfill(src=None, snapshot: Path = SNAPSHOT, today: pd.Timestamp | None = None, params: dict | None = None,
-             cal: dict | None = None) -> dict:
-    src = src or RealSources(cache=True)
+             cal: dict | None = None, stage: str = "all") -> dict | None:
+    """stage 'data' builds the feature panel and keeps it in data/raw/; 'model' tunes, backtests and saves
+    the snapshot from it; 'all' does both (each stage alone stays well under ten minutes)."""
     s = settings()
     cal, today = cal or s["calendar"], today or pd.Timestamp.today()
     last = last_closed(today)
     months = pd.period_range(cal["first_feature_month"], last, freq="M")
+    if stage == "model":
+        st = pickle.loads(STATE.read_bytes())
+        members, dim, prices, fund, factors, panel = (st[k] for k in ("members", "dim", "prices", "fund", "factors",
+                                                                        "panel"))
+        return _backfill_model(members, dim, prices, fund, factors, panel, snapshot, today, params, cal, months, last)
+    src = src or RealSources(cache=True)
     print(f"backfill {months[0]}..{last}", flush=True)
 
     current = src.current()
@@ -267,6 +280,17 @@ def backfill(src=None, snapshot: Path = SNAPSHOT, today: pd.Timestamp | None = N
 
     panel = _features(months, members, prices, fund, dim)
     print(f"  features {len(panel):,} rows", flush=True)
+    if stage == "data":
+        RAW.mkdir(parents=True, exist_ok=True)
+        STATE.write_bytes(pickle.dumps({"members": members, "dim": dim, "prices": prices, "fund": fund,
+                                        "factors": factors, "panel": panel}))
+        print(f"  data stage kept in {STATE.relative_to(ROOT)}", flush=True)
+        return None
+    return _backfill_model(members, dim, prices, fund, factors, panel, snapshot, today, params, cal, months, last)
+
+
+def _backfill_model(members, dim, prices, fund, factors, panel, snapshot, today, params, cal, months, last) -> dict:
+    s = settings()
     validation_ic = None
     if params is None:
         tuned = md.tune(panel, cal["tuning_until"])
@@ -294,6 +318,7 @@ def backfill(src=None, snapshot: Path = SNAPSHOT, today: pd.Timestamp | None = N
     perf = pd.concat(perf, ignore_index=True)[["month", "strategy", "gross", "cost", "net", "turnover", "n_missing"]]
 
     surv = px.survivorship(members, stocks)
+    flagged = px.flag_implausible(stocks, members)
     tables = {
         "dim_month": pd.DataFrame({"month": months, "year": months.year, "quarter": months.quarter}),
         "dim_security": dim,
@@ -316,9 +341,9 @@ def backfill(src=None, snapshot: Path = SNAPSHOT, today: pd.Timestamp | None = N
     summary = _summary(perf, factors, _ic_stats(scores, panel), params, {
         "validation_ic": validation_ic, "survivorship": surv, "coverage": coverage, "data_through": str(last),
         "universe": {"securities": int(members["ticker"].nunique()), "with_cik": int(dim["cik"].notna().sum())},
-        "live": {}, "gates": [list(r) for r in gate_rows]})
+        "live": {}, "gates": [list(r) for r in gate_rows], "flagged_series": flagged.round(4).to_dict("records")})
     _save(tables, summary, snapshot)
-    quality.report(tables, gate_rows, surv, snapshot)
+    quality.report(tables, gate_rows, surv, snapshot, flagged)
     print(f"  saved snapshot: backtest {summary['backtest']}, mean IC {summary['ic']['mean']:.4f}", flush=True)
     return summary
 
@@ -419,7 +444,8 @@ def monthly(src=None, month: str | None = None, snapshot: Path = SNAPSHOT, today
         summary["gates"] = [list(r) for r in gate_rows]
     with step("save"):
         _save(tables, summary, snapshot)
-        quality.report(tables, gate_rows, px.survivorship(members, stocks), snapshot)
+        quality.report(tables, gate_rows, px.survivorship(members, stocks), snapshot,
+                       px.flag_implausible(stocks, members))
         report.monthly(m, snapshot)
     return "done"
 
@@ -439,14 +465,15 @@ def _live_summary(lv: pd.DataFrame) -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="factorml.pipeline")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("backfill")
+    bf = sub.add_parser("backfill")
+    bf.add_argument("--stage", choices=["all", "data", "model"], default="all")
     mo = sub.add_parser("monthly")
     mo.add_argument("--month", help="YYYY-MM (default: last closed month)")
     sub.add_parser("report")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "backfill":
-            backfill()
+            backfill(stage=a.stage)
         elif a.cmd == "monthly":
             ERROR_FILE.unlink(missing_ok=True)
             print(monthly(month=a.month))
