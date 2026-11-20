@@ -41,6 +41,7 @@ def main(argv=None) -> None:
     info = json.loads(ERROR_FILE.read_text()) if ERROR_FILE.exists() else {
         "step": "unknown", "error": "the job failed before the pipeline started", "month": None}
     title, body = issue(info["step"], a.run_url, info["error"], info.get("month"))
+    RAW.mkdir(parents=True, exist_ok=True)
     (RAW / "alert_title.txt").write_text(title)
     (RAW / "alert_body.md").write_text(body)
     print(title)
