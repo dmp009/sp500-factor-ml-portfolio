@@ -29,10 +29,10 @@ c4.metric("Alpha after factors", pct(s["attribution"]["model"]["alpha_annual"], 
 st.caption(f"Backtest {bt['first_month']} to {bt['last_month']} ({bt['months']} months), 10 bps per side. "
            f"Data through {s['data_through']}.")
 
-st.info("**The honest result.** Out of sample, the model does not beat the S&P 500. Its ranking skill is "
-        "indistinguishable from zero, and its returns are explained by market beta and a value tilt. Classic "
-        "factors have been weak in US large caps since 2010, and the large-cap index was hard to beat. The "
-        "project shows how to test that properly, without look-ahead, and how to run it live.",
+st.info("Out of sample, the model does not beat the S&P 500. Its ranking skill is indistinguishable from "
+        "zero, and its returns are explained by a market beta of 1.2 and a value tilt. Over these years a "
+        "cap-weighted index led by a few very large growth companies was hard to beat. The project shows how "
+        "to run that test without look-ahead, and how to keep the portfolio running live.",
         icon=":material/balance:")
 st.plotly_chart(ch.cumulative(net_wide(), "Growth of $1, net of costs"), width="stretch")
 
