@@ -1,0 +1,14 @@
+# Old ticker -> current ticker, for companies that changed ticker while in the index, so one company
+# keeps one security id (prices and SEC filings follow the company, not the symbol).
+renames:
+  FB: META
+  SQ: XYZ
+  ANTM: ELV
+  FISV: FI
+  WLTW: WTW
+  PKI: RVTY
+  FLT: CPAY
+  ABC: COR
+  RE: EG
+  BLL: BALL
+  DISCA: WBD

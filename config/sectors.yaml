@@ -1,0 +1,13 @@
+# SEC SIC code ranges -> 11 sectors (GICS-like). First match wins, so the narrow ranges come first.
+# Used only for securities the Wikipedia table does not cover (GICS is used where available).
+- {sector: Real Estate, ranges: [[6500, 6599], [6798, 6798]]}
+- {sector: Health Care, ranges: [[2830, 2849], [3840, 3851], [8000, 8099], [8731, 8734]]}
+- {sector: Information Technology, ranges: [[3570, 3579], [3660, 3699], [3800, 3839], [3860, 3899], [7370, 7379]]}
+- {sector: Communication Services, ranges: [[2700, 2799], [4800, 4899], [7810, 7829]]}
+- {sector: Utilities, ranges: [[4900, 4999]]}
+- {sector: Energy, ranges: [[1300, 1399], [2900, 2999]]}
+- {sector: Financials, ranges: [[6000, 6499], [6700, 6799]]}
+- {sector: Consumer Staples, ranges: [[100, 999], [2000, 2199]]}
+- {sector: Consumer Discretionary, ranges: [[2300, 2399], [2500, 2599], [3000, 3199], [3630, 3659], [3710, 3716], [3900, 3999], [5000, 5999], [7000, 7099], [7800, 7999]]}
+- {sector: Materials, ranges: [[1000, 1299], [1400, 1499], [2400, 2499], [2600, 2699], [2800, 2829], [2850, 2899], [3200, 3399]]}
+- {sector: Industrials, ranges: [[1500, 1799], [3400, 3569], [3580, 3599], [3720, 3799], [4000, 4799], [7380, 7389], [8700, 8748]]}
