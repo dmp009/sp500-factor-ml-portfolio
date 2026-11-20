@@ -17,7 +17,7 @@ test:
 lint:
 	$(PY) -m ruff check .
 
-backfill:    ## full history from the sources (network, about 30 minutes)
+backfill:    ## full history from the sources (network, about 10 minutes)
 	$(PY) -m factorml.pipeline backfill
 
 monthly:     ## what the scheduled GitHub Action runs
@@ -26,5 +26,6 @@ monthly:     ## what the scheduled GitHub Action runs
 app:
 	$(PY) -m streamlit run app/Home.py
 
-deck:
-	node deck/build_deck.js
+deck:        ## strategy deck from the committed snapshot (needs Node)
+	$(PY) -m deck.export_data
+	cd deck && npm ci --silent && node build_deck.js

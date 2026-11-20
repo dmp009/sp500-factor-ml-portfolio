@@ -1,0 +1,241 @@
+{
+ "summary": {
+  "metrics": {
+   "model": {
+    "months": 165,
+    "cagr": 0.12399203380278889,
+    "vol": 0.19618252597601177,
+    "sharpe": 0.6092159579096916,
+    "max_dd": 0.3122753762559054,
+    "tracking_error": 0.09096345598483177,
+    "info_ratio": -0.10602168752632257,
+    "hit_rate": 0.4727272727272727,
+    "avg_turnover": 0.6133210165034486
+   },
+   "factor_rule": {
+    "months": 165,
+    "cagr": 0.11419719506639714,
+    "vol": 0.15787251194245902,
+    "sharpe": 0.6586989699998285,
+    "max_dd": 0.2869266107819093,
+    "tracking_error": 0.09229066259852413,
+    "info_ratio": -0.27311485677811453,
+    "hit_rate": 0.4484848484848485,
+    "avg_turnover": 0.22971540417235187
+   },
+   "equal_weight": {
+    "months": 165,
+    "cagr": 0.13147001653013612,
+    "vol": 0.15338567967786088,
+    "sharpe": 0.772673520989938,
+    "max_dd": 0.26866278811948074,
+    "tracking_error": 0.055246632937485905,
+    "info_ratio": -0.18949310166865657,
+    "hit_rate": 0.4727272727272727,
+    "avg_turnover": null
+   },
+   "sp500tr": {
+    "months": 165,
+    "cagr": 0.1452906911253098,
+    "vol": 0.14159740515116664,
+    "sharpe": 0.9131421026399746,
+    "max_dd": 0.23867343686881992,
+    "tracking_error": 0.0,
+    "info_ratio": null,
+    "hit_rate": 0.0,
+    "avg_turnover": null
+   }
+  },
+  "ic": {
+   "mean": 0.0007332963758664135,
+   "t": 0.08479644690605194,
+   "months": 165,
+   "share_positive": 0.509090909090909,
+   "top_minus_bottom_decile_monthly": 0.0013596446314810791
+  },
+  "backtest": {
+   "first_month": "2013-02",
+   "last_month": "2026-10",
+   "months": 165
+  },
+  "survivorship": {
+   "n_missing": 190,
+   "share_missing": 0.2275449101796407
+  },
+  "coverage": {
+   "2010-06": 0.6633,
+   "2018-08": 0.8261,
+   "2026-10": 0.996
+  },
+  "universe": {
+   "securities": 835,
+   "with_cik": 626
+  },
+  "gates": [
+   [
+    "month_closed",
+    true,
+    "2026-10 ends 2026-10-31, today is 2026-11-20"
+   ],
+   [
+    "member_count",
+    true,
+    "503 members (allowed 495-510)"
+   ],
+   [
+    "price_coverage",
+    true,
+    "99.6% of members priced (min 95%)"
+   ],
+   [
+    "max_abs_return",
+    true,
+    "0 members beyond 80% (max 3), largest 45% (max 300%)"
+   ],
+   [
+    "features_built",
+    true,
+    "503 feature rows for 503 members"
+   ]
+  ]
+ },
+ "attribution": {
+  "alpha_annual": -0.025209577513560816,
+  "alpha_t": -1.6377162835999681,
+  "betas": {
+   "mkt_rf": 1.2004113837732528,
+   "smb": 0.12367731670898305,
+   "hml": 0.26890903608610606,
+   "rmw": -0.22060089812049516,
+   "cma": -0.037413450491696545,
+   "mom": 0.019683051009959443
+  },
+  "t_values": {
+   "mkt_rf": 23.559016925458216,
+   "smb": 1.627232195869925,
+   "hml": 3.5198423818321434,
+   "rmw": -1.8822019887199204,
+   "cma": -0.3542929049914202,
+   "mom": 0.2554371208826601
+  },
+  "r2": 0.8824405108597678,
+  "n": 164,
+  "reading": "After controlling for the five Fama-French factors and momentum, the annual alpha is -2.5% (t = -1.6), which is not statistically significant: factor exposure explains the returns. The significant tilts are value."
+ },
+ "growth": {
+  "years": [
+   "2013",
+   "2014",
+   "2015",
+   "2016",
+   "2017",
+   "2018",
+   "2019",
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025",
+   "2026"
+  ],
+  "equal_weight": [
+   1.285,
+   1.478,
+   1.461,
+   1.697,
+   2.051,
+   1.904,
+   2.495,
+   2.804,
+   3.642,
+   3.239,
+   3.757,
+   4.241,
+   4.722,
+   5.465
+  ],
+  "factor_rule": [
+   1.351,
+   1.508,
+   1.478,
+   1.526,
+   1.745,
+   1.48,
+   1.821,
+   1.805,
+   2.302,
+   2.29,
+   2.468,
+   3.127,
+   3.648,
+   4.423
+  ],
+  "model": [
+   1.311,
+   1.474,
+   1.44,
+   1.581,
+   1.867,
+   1.735,
+   2.245,
+   2.626,
+   3.369,
+   2.754,
+   3.113,
+   3.545,
+   4.416,
+   4.989
+  ],
+  "sp500tr": [
+   1.259,
+   1.431,
+   1.451,
+   1.624,
+   1.979,
+   1.892,
+   2.488,
+   2.946,
+   3.791,
+   3.105,
+   3.921,
+   4.902,
+   5.778,
+   6.458
+  ]
+ },
+ "shap": [
+  {
+   "label": "Last-month return",
+   "value": 0.201
+  },
+  {
+   "label": "Sector",
+   "value": 0.154
+  },
+  {
+   "label": "6-1 month momentum",
+   "value": 0.15
+  },
+  {
+   "label": "Asset growth",
+   "value": 0.109
+  },
+  {
+   "label": "12-1 month momentum",
+   "value": 0.106
+  },
+  {
+   "label": "12-month market beta",
+   "value": 0.102
+  },
+  {
+   "label": "12-month volatility",
+   "value": 0.092
+  },
+  {
+   "label": "Sales-to-price",
+   "value": 0.091
+  }
+ ]
+}
