@@ -67,3 +67,8 @@ def test_target_is_next_month_minus_median():
                          "ret": [0.10, 0.02, -0.04, 0.5, 0.5, 0.5]})
     y = ft.target(rets, M)
     assert np.allclose(y[["A", "B", "C"]], [0.08, 0.0, -0.06])
+
+
+def test_investable_needs_a_price_at_formation():
+    p = pd.DataFrame({"month": M, "ticker": ["A", "B"], "rev_1": [0.5, np.nan]})
+    assert list(ft.investable(p)["ticker"]) == ["A"]

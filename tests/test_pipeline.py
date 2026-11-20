@@ -106,3 +106,10 @@ def test_gate_failure_writes_nothing(snap):
         pl.monthly(Fake(priced=TICKERS[:400]), snapshot=snap, today=pd.Timestamp("2011-09-02"))
     assert e.value.gate == "price_coverage"
     assert files() == before
+
+
+def test_holdings_always_have_a_price(tmp_path):
+    priced = TICKERS[:300]  # Yahoo lacks 40% of the members (old delistings)
+    pl.backfill(Fake(priced=priced), snapshot=tmp_path, today=pd.Timestamp("2011-07-05"), params=FAST, cal=CAL)
+    assert set(wh.load("fact_holdings", tmp_path)["ticker"]) <= set(priced)
+    assert (wh.load("fact_performance", tmp_path)["n_missing"] == 0).all()

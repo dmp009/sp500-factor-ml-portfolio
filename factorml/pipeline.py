@@ -293,16 +293,16 @@ def _backfill_model(members, dim, prices, fund, factors, panel, snapshot, today,
     s = settings()
     validation_ic = None
     if params is None:
-        tuned = md.tune(panel, cal["tuning_until"])
+        tuned = md.tune(ft.investable(panel), cal["tuning_until"])
         params, validation_ic = tuned["params"], tuned["validation_ic"]
         _write_params(params, validation_ic, cal["tuning_until"])
         print(f"  tuned: {params} (validation IC {validation_ic})", flush=True)
 
     shap_parts = []
     oos_last = panel["month"].max()
-    scores = md.walk_forward(panel, cal["first_oos_month"], params, on_fit=lambda m, mod, X: shap_parts.append(
+    scores = md.walk_forward(ft.investable(panel), cal["first_oos_month"], params, on_fit=lambda m, mod, X: shap_parts.append(
         _shap_rows(m, mod, X, keep_stocks=(m == oos_last))))
-    oos = panel[panel["month"] >= pd.Period(cal["first_oos_month"], "M")]
+    oos = ft.investable(panel[panel["month"] >= pd.Period(cal["first_oos_month"], "M")])
     rule = md.factor_rule(oos)
     top_n, bps = s["portfolio"]["top_n"], s["portfolio"]["cost_bps_per_side"]
     hold = pf.weights(scores, top_n)
@@ -311,7 +311,8 @@ def _backfill_model(members, dim, prices, fund, factors, panel, snapshot, today,
     for name, w in (("model", hold), ("factor_rule", pf.weights(rule, top_n))):
         perf.append(pf.strategy_returns(w, stocks, bps).assign(strategy=name))
     earned = perf[0]["month"]
-    ew = pf.equal_weight_universe(members[members["month"] >= pd.Period(cal["first_oos_month"], "M")], stocks)
+    priced = ft.investable(oos)[["month", "ticker"]]
+    ew = pf.equal_weight_universe(priced, stocks)
     for name, r in (("equal_weight", ew.reindex(earned)), ("sp500tr", _bench_returns(prices, earned))):
         perf.append(pd.DataFrame({"month": earned.to_numpy(), "gross": r.to_numpy(), "cost": 0.0,
                                   "net": r.to_numpy(), "turnover": np.nan, "n_missing": 0, "strategy": name}))
@@ -403,7 +404,7 @@ def monthly(src=None, month: str | None = None, snapshot: Path = SNAPSHOT, today
     with step("model"):
         params = model_params()
         shap_parts = []
-        scores = md.walk_forward(panel, str(m), params,
+        scores = md.walk_forward(ft.investable(panel), str(m), params,
                                  on_fit=lambda mm, mod, X: shap_parts.append(_shap_rows(mm, mod, X, True)))
     with step("portfolio"):
         top_n, bps = s["portfolio"]["top_n"], s["portfolio"]["cost_bps_per_side"]
@@ -418,8 +419,9 @@ def monthly(src=None, month: str | None = None, snapshot: Path = SNAPSHOT, today
         if len(prev_live):
             gross = float((prev.set_index("ticker")["weight"] * ret_m.reindex(prev["ticker"]).fillna(0).to_numpy()).sum())
             prev_ret = gross - float(prev_live["cost"].iat[0])
-        rule_prev = pf.weights(md.factor_rule(panel[panel["month"] == m - 1]), top_n)
-        mem_prev = members.loc[members["month"] == m - 1, "ticker"]
+        prev_panel = ft.investable(panel[panel["month"] == m - 1])
+        rule_prev = pf.weights(md.factor_rule(prev_panel), top_n)
+        mem_prev = prev_panel["ticker"]
         row = pd.DataFrame([{
             "month": m, "model_version": md.version(params), "n_holdings": len(w), "turnover": to,
             "cost": 2 * to * bps / 1e4, "prev_portfolio_return": prev_ret,

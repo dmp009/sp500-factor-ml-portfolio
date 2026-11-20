@@ -1,5 +1,5 @@
 # LightGBM hyper-parameters. Chosen once by factorml.model.tune on months up to 2012-12
-# (mean validation IC -0.0313) and frozen for the backtest and the live runs.
+# (mean validation IC -0.0274) and frozen for the backtest and the live runs.
 params:
   n_estimators: 300
   learning_rate: 0.03
@@ -8,5 +8,5 @@ params:
   colsample_bytree: 0.8
   random_state: 0
   verbose: -1
-  num_leaves: 31
+  num_leaves: 7
   min_child_samples: 100

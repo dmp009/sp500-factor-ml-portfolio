@@ -75,3 +75,9 @@ def target(returns: pd.DataFrame, month: pd.Period, tickers=None) -> pd.Series:
     if tickers is not None:
         nxt = nxt[nxt.index.isin(tickers)]
     return (nxt - nxt.median()).rename("target")
+
+
+def investable(panel: pd.DataFrame) -> pd.DataFrame:
+    """Members that have a price in the formation month (a stock with no price cannot be bought).
+    Without this, members missing on Yahoo (old delistings) get scored and then earn nothing."""
+    return panel[panel["rev_1"].notna()]
