@@ -25,9 +25,12 @@ def turnover(w_prev: pd.Series, w_new: pd.Series) -> float:
 def strategy_returns(weights: pd.DataFrame, returns: pd.DataFrame, cost_bps: float) -> pd.DataFrame:
     """[month, gross, cost, net, turnover, n_missing]; `month` is the month the return was earned."""
     ret = returns.set_index(["month", "ticker"])["ret"]
+    known = set(returns.loc[returns["ret"].notna(), "month"])
     held = pd.Series(dtype=float)  # drifted holdings before this rebalance; empty = cash
     rows = []
     for m, w in weights.groupby("month", sort=True):
+        if m + 1 not in known:  # next month not closed yet: nothing earned
+            continue
         w = w.set_index("ticker")["weight"]
         to = turnover(held, w)
         r = pd.Series([ret.get((m + 1, t), float("nan")) for t in w.index], index=w.index)

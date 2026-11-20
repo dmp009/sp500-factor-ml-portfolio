@@ -40,8 +40,11 @@ def _ranked(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def walk_forward(panel: pd.DataFrame, first_oos: str, params: dict) -> pd.DataFrame:
-    """[month, ticker, score, rank, model_version] for every month >= first_oos (expanding window)."""
+def walk_forward(panel: pd.DataFrame, first_oos: str, params: dict, on_fit=None) -> pd.DataFrame:
+    """[month, ticker, score, rank, model_version] for every month >= first_oos (expanding window).
+
+    on_fit(month, model, X_test) is called after each fit (X_test is indexed by ticker), e.g. for SHAP.
+    """
     months = sorted(panel["month"].unique())
     out = []
     for m in [m for m in months if m >= pd.Period(first_oos, "M")]:
@@ -50,8 +53,10 @@ def walk_forward(panel: pd.DataFrame, first_oos: str, params: dict) -> pd.DataFr
         if train.empty or test.empty:
             continue
         model = fit(_X(train), train["target"], params)
-        out.append(pd.DataFrame({"month": m, "ticker": test["ticker"].to_numpy(),
-                                 "score": model.predict(_X(test))}))
+        X_test = _X(test).set_axis(test["ticker"].to_numpy())
+        out.append(pd.DataFrame({"month": m, "ticker": test["ticker"].to_numpy(), "score": model.predict(X_test)}))
+        if on_fit:
+            on_fit(m, model, X_test)
     res = _ranked(pd.concat(out, ignore_index=True))
     res["model_version"] = version(params)
     return res

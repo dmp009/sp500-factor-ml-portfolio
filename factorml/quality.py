@@ -44,7 +44,8 @@ def enforce(month, members, returns, features, today=None) -> list[tuple[str, bo
     return rows
 
 
-def report(tables: dict[str, pd.DataFrame], gate_rows: list[tuple[str, bool, str]], survivorship: dict) -> str:
+def report(tables: dict[str, pd.DataFrame], gate_rows: list[tuple[str, bool, str]], survivorship: dict,
+           snapshot=SNAPSHOT) -> str:
     """Markdown data-quality report, also written to data/snapshot/data_quality_report.md."""
     lines = ["# Data quality report", "", "## Gates (latest month)", "", "| Gate | Result | Detail |", "|---|---|---|"]
     lines += [f"| {g} | {'pass' if ok else 'FAIL'} | {d} |" for g, ok, d in gate_rows]
@@ -55,6 +56,6 @@ def report(tables: dict[str, pd.DataFrame], gate_rows: list[tuple[str, bool, str
               f"price on Yahoo ({survivorship['share_missing']:.1%}); they are mostly companies acquired or delisted "
               "years ago. Months where a held stock has no return are counted, not filled.")]
     text = "\n".join(lines) + "\n"
-    SNAPSHOT.mkdir(parents=True, exist_ok=True)
-    (SNAPSHOT / "data_quality_report.md").write_text(text, encoding="utf-8")
+    snapshot.mkdir(parents=True, exist_ok=True)
+    (snapshot / "data_quality_report.md").write_text(text, encoding="utf-8")
     return text

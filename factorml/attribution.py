@@ -15,7 +15,7 @@ NAMES = {"mkt_rf": "market", "smb": "size", "hml": "value", "rmw": "profitabilit
 
 def regress(excess: pd.Series, factors: pd.DataFrame) -> dict:
     data = pd.concat([excess.rename("y"), factors[FACTORS]], axis=1, join="inner").dropna()
-    fit = sm.OLS(data["y"], sm.add_constant(data[FACTORS])).fit(cov_type="HAC", cov_kwds={"maxlags": 6})
+    fit = sm.OLS(data["y"], sm.add_constant(data[FACTORS], has_constant="add")).fit(cov_type="HAC", cov_kwds={"maxlags": 6})
     return {
         "alpha_annual": float(fit.params["const"] * 12),
         "alpha_t": float(fit.tvalues["const"]),

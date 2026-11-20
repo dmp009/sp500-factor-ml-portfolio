@@ -45,3 +45,10 @@ def test_equal_weight_universe_mean():
     r = pd.DataFrame({"month": [M + 1] * 4, "ticker": ["A", "B", "C", "Z"], "ret": [0.03, 0.0, -0.03, 0.5]})
     ew = pf.equal_weight_universe(members, r)
     assert np.isclose(ew[M + 1], 0.0)  # Z is not a member
+
+
+def test_month_without_any_next_returns_is_skipped():
+    w = pd.DataFrame({"month": [M, M + 1], "ticker": ["A", "A"], "weight": [1.0, 1.0]})
+    r = pd.DataFrame({"month": [M + 1], "ticker": ["A"], "ret": [0.02]})  # M+2 not known yet
+    s = pf.strategy_returns(w, r, cost_bps=0)
+    assert list(s["month"]) == [M + 1]
