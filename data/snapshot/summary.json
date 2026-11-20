@@ -174,8 +174,8 @@
     ],
     [
       "max_abs_return",
-      false,
-      "largest absolute monthly return 81.6% (max 80%)"
+      true,
+      "0 members beyond 80% (max 3), largest 45% (max 300%)"
     ],
     [
       "features_built",

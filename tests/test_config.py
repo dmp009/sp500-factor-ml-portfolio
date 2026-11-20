@@ -7,7 +7,7 @@ def test_settings_values():
     assert s["calendar"]["first_feature_month"] == "2010-06"
     assert s["calendar"]["first_oos_month"] == "2013-01"
     assert s["gates"] == {"min_price_coverage": 0.95, "max_abs_monthly_return": 0.80,
-                          "members_min": 495, "members_max": 510}
+                          "members_min": 495, "members_max": 510, "max_big_moves": 3, "hard_max_abs_monthly_return": 3.0}
 
 
 def test_paths_and_model_params():

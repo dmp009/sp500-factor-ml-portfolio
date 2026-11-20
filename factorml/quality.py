@@ -21,7 +21,9 @@ def gates(month: pd.Period, members: pd.DataFrame, returns: pd.DataFrame, featur
     today = today or pd.Timestamp.today()
     n = int((members["month"] == month).sum())
     cov = coverage(returns, members, month)
-    r = returns.loc[returns["month"] == month, "ret"].dropna()
+    mem = set(members.loc[members["month"] == month, "ticker"])
+    r = returns[(returns["month"] == month) & returns["ticker"].isin(mem)].set_index("ticker")["ret"].dropna()
+    big = r[r.abs() > g["max_abs_monthly_return"]].sort_values(key=abs, ascending=False)
     worst = float(r.abs().max()) if len(r) else 0.0
     nf = int((features["month"] == month).sum())
     return [
@@ -30,8 +32,11 @@ def gates(month: pd.Period, members: pd.DataFrame, returns: pd.DataFrame, featur
         ("member_count", g["members_min"] <= n <= g["members_max"],
          f"{n} members (allowed {g['members_min']}-{g['members_max']})"),
         ("price_coverage", cov >= g["min_price_coverage"], f"{cov:.1%} of members priced (min {g['min_price_coverage']:.0%})"),
-        ("max_abs_return", worst <= g["max_abs_monthly_return"],
-         f"largest absolute monthly return {worst:.1%} (max {g['max_abs_monthly_return']:.0%})"),
+        # real moves beyond 80% happen (SNDK +143%, Jan 2026); a data error is one absurd value or many at once
+        ("max_abs_return", worst <= g["hard_max_abs_monthly_return"] and len(big) <= g["max_big_moves"],
+         f"{len(big)} members beyond {g['max_abs_monthly_return']:.0%} (max {g['max_big_moves']}), largest "
+         f"{worst:.0%} (max {g['hard_max_abs_monthly_return']:.0%})"
+         + (": " + ", ".join(f"{t} {v:+.0%}" for t, v in big.head(5).items()) if len(big) else "")),
         ("features_built", nf == n, f"{nf} feature rows for {n} members"),
     ]
 

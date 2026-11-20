@@ -19,7 +19,9 @@ portfolio:
 
 gates:
   min_price_coverage: 0.95
-  max_abs_monthly_return: 0.80
+  max_abs_monthly_return: 0.80       # a move this large is listed in the gate detail
+  max_big_moves: 3                   # more members than this beyond it in one month: data problem
+  hard_max_abs_monthly_return: 3.0   # any single move beyond +/-300%: data problem
   members_min: 495
   members_max: 510
 

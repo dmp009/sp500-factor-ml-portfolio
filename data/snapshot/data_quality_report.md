@@ -7,7 +7,7 @@
 | month_closed | pass | 2026-10 ends 2026-10-31, today is 2026-11-20 |
 | member_count | pass | 503 members (allowed 495-510) |
 | price_coverage | pass | 99.6% of members priced (min 95%) |
-| max_abs_return | FAIL | largest absolute monthly return 81.6% (max 80%) |
+| max_abs_return | pass | 0 members beyond 80% (max 3), largest 45% (max 300%) |
 | features_built | pass | 503 feature rows for 503 members |
 
 ## Tables
