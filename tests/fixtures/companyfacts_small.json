@@ -1,0 +1,18 @@
+{"cik": 1234, "entityName": "Example Corp", "facts": {
+ "dei": {"EntityCommonStockSharesOutstanding": {"units": {"shares": [
+   {"end": "2015-02-10", "val": 1000, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"},
+   {"end": "2015-04-25", "val": 990, "fy": 2015, "fp": "Q1", "form": "10-Q", "filed": "2015-05-05"}]}}},
+ "us-gaap": {
+  "Revenues": {"units": {"USD": [
+   {"start": "2013-01-01", "end": "2013-12-31", "val": 400, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"},
+   {"start": "2014-01-01", "end": "2014-12-31", "val": 500, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"},
+   {"start": "2015-01-01", "end": "2015-03-31", "val": 130, "fy": 2015, "fp": "Q1", "form": "10-Q", "filed": "2015-05-05"}]}},
+  "NetIncomeLoss": {"units": {"USD": [
+   {"start": "2014-01-01", "end": "2014-12-31", "val": 100, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"},
+   {"start": "2014-01-01", "end": "2014-12-31", "val": 90, "fy": 2015, "fp": "FY", "form": "10-K", "filed": "2016-02-18"},
+   {"start": "2015-01-01", "end": "2015-12-31", "val": 120, "fy": 2015, "fp": "FY", "form": "10-K", "filed": "2016-02-18"}]}},
+  "Assets": {"units": {"USD": [
+   {"end": "2014-12-31", "val": 2000, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"}]}},
+  "StockholdersEquity": {"units": {"USD": [
+   {"end": "2014-12-31", "val": 800, "fy": 2014, "fp": "FY", "form": "10-K", "filed": "2015-02-20"}]}}
+ }}}
