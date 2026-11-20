@@ -1,1 +1,10 @@
 .superpowers/
+.venv/
+data/raw/
+.env
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+node_modules/

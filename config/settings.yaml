@@ -1,0 +1,28 @@
+# sp500-factor-ml-portfolio: project settings (see docs/design/2026-11-20-design.md)
+sources:
+  wikipedia: https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
+  french_ff5: https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_5_Factors_2x3_CSV.zip
+  french_mom: https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Momentum_Factor_CSV.zip
+  sec_tickers: https://www.sec.gov/files/company_tickers.json
+  benchmark: ^SP500TR
+user_agent_default: "sp500-factor-ml-portfolio research project"
+
+calendar:
+  price_start: "2005-01-01"
+  first_feature_month: "2010-06"   # XBRL covers large filers from mid-2009
+  first_oos_month: "2013-01"       # three years of training first
+  tuning_until: "2012-12"          # hyper-parameters chosen once on 2010-2012, then frozen
+
+portfolio:
+  top_n: 50
+  cost_bps_per_side: 10
+
+gates:
+  min_price_coverage: 0.95
+  max_abs_monthly_return: 0.80
+  members_min: 495
+  members_max: 510
+
+disclaimer: >-
+  Educational project, not investment advice. Past performance, simulated or live, does not
+  predict future results.

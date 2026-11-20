@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "factorml"
+version = "0.1.0"
+description = "Live long-only S&P 500 portfolio ranked monthly by a LightGBM factor model, with backtest, Fama-French attribution and SHAP."
+requires-python = ">=3.11"
+dependencies = [
+  "pandas>=2.2", "numpy", "pyarrow", "duckdb>=1.1", "pandera>=0.24", "pyyaml",
+  "lightgbm>=4", "scikit-learn", "shap", "statsmodels", "yfinance", "requests", "lxml", "html5lib",
+  "plotly", "streamlit>=1.50",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+include = ["factorml*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = ["network: needs internet (skipped in CI)"]
+addopts = "-m 'not network'"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"app/Home.py" = ["N999", "E402"]
+"app/pages/*.py" = ["N999"]
+"app/common.py" = ["E402"]
