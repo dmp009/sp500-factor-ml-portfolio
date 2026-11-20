@@ -26,6 +26,8 @@ def test_as_of_respects_filed():
     assert at("2015-01", "total_assets") is None  # FY2014 10-K filed 2015-02-20
     assert at("2015-02", "total_assets") == 2000
     assert at("2015-02", "revenue") == 500  # latest period, not the comparative
+    a = f.as_of(PANEL, pd.Period("2015-03", "M"))
+    assert a.loc[a["item"] == "shares_outstanding", "period_end"].iat[0] == pd.Timestamp("2015-02-10")
 
 
 def test_restatement_no_leak():

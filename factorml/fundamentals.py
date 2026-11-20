@@ -76,12 +76,12 @@ def facts_panel(companyfacts: dict, cik: str) -> pd.DataFrame:
 
 
 def as_of(panel: pd.DataFrame, month: pd.Period) -> pd.DataFrame:
-    """[cik, item, value]: latest period known at month end; for that period, the latest filing of it."""
+    """[cik, item, value, period_end]: latest period known at month end; for that period, the latest filing of it."""
     known = panel[panel["filed"] <= month.to_timestamp(how="end")]
     if known.empty:
-        return pd.DataFrame(columns=["cik", "item", "value"])
+        return pd.DataFrame(columns=["cik", "item", "value", "period_end"])
     last = known.sort_values(["period_end", "filed"]).groupby(["cik", "item"]).tail(1)
-    return last[["cik", "item", "value"]].reset_index(drop=True)
+    return last[["cik", "item", "value", "period_end"]].reset_index(drop=True)
 
 
 def _read_env_file(path: Path, key: str) -> str | None:

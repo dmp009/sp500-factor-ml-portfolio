@@ -6,7 +6,7 @@ from factorml import prices as p
 
 def fake_frame(tickers, start="2016-01-01", end="2016-06-30"):
     idx = pd.bdate_range(start, end)
-    cols = pd.MultiIndex.from_product([["Close"], tickers])
+    cols = pd.MultiIndex.from_product([["Adj Close", "Close", "Stock Splits"], tickers])
     return pd.DataFrame(100.0, index=idx, columns=cols)
 
 
@@ -23,8 +23,9 @@ def test_batches_and_retries():
                      fetch=fetch, sleep=slept.append)
     assert len(calls) == 4  # 251 tickers in batches of 100 = 3 calls, plus one retry
     assert slept == [2]
-    assert "BRK.B" in out.columns  # fetched as BRK-B, returned under the index ticker
-    assert out.shape[1] == 251
+    assert set(out) == {"adj", "close", "splits"}
+    assert "BRK.B" in out["adj"].columns  # fetched as BRK-B, returned under the index ticker
+    assert out["adj"].shape[1] == 251 and out["splits"].shape[1] == 251
 
 
 def test_empty_batch_is_retried_then_fails():
@@ -70,3 +71,12 @@ def test_survivorship():
     members = pd.DataFrame({"month": m, "ticker": ["A", "B", "C", "D"]})
     rets = pd.DataFrame({"month": m, "ticker": ["A", "B", "C"], "ret": 0.0})
     assert p.survivorship(members, rets) == {"n_missing": 1, "share_missing": 0.25}
+
+
+def test_market_cap_restates_shares_for_later_splits():
+    # 1,000 shares reported at 2020-06-27; 4:1 split on 2020-08-31; Yahoo close is split-adjusted (125 ~ 500/4)
+    splits = pd.DataFrame({"AAPL": [0.0, 4.0, 0.0]},
+                          index=pd.DatetimeIndex(["2020-06-30", "2020-08-31", "2021-06-30"]))
+    shares = pd.DataFrame({"ticker": ["AAPL"], "value": [1000.0], "period_end": [pd.Timestamp("2020-06-27")]})
+    close = pd.Series({"AAPL": 125.0})
+    assert p.market_cap(close, shares, splits)["AAPL"] == 500_000  # 125 * 1,000 * 4
