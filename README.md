@@ -5,7 +5,7 @@
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-**Live demo:** coming soon (Streamlit Community Cloud)
+**Live demo:** https://sp500-factor-ml-portfolio.streamlit.app
 
 A machine-learning stock ranker for the S&P 500, tested the way a quant team would test it: point-in-time
 index membership, accounting data used only from its SEC filing date, a model retrained every month on the
