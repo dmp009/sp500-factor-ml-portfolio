@@ -9,7 +9,7 @@ description = "Live long-only S&P 500 portfolio ranked monthly by a LightGBM fac
 requires-python = ">=3.11"
 dependencies = [
   "pandas>=2.2", "numpy", "pyarrow", "duckdb>=1.1", "pandera>=0.24", "pyyaml",
-  "lightgbm>=4", "scikit-learn", "shap", "statsmodels", "yfinance", "requests", "lxml", "html5lib",
+  "lightgbm>=4", "scikit-learn", "statsmodels", "yfinance", "requests", "lxml", "html5lib",
   "plotly", "streamlit>=1.50",
 ]
 
