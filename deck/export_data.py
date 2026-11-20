@@ -1,5 +1,6 @@
 """Write deck/deck_data.json from the committed snapshot, so the deck script needs no Python."""
 import json
+import math
 from pathlib import Path
 
 from factorml.explain import LABELS
@@ -24,7 +25,7 @@ out = {
 }
 for m in out["summary"]["metrics"].values():  # JSON has no NaN (e.g. index turnover)
     for k, v in m.items():
-        if v != v:
+        if isinstance(v, float) and math.isnan(v):
             m[k] = None
 (ROOT / "deck/deck_data.json").write_text(json.dumps(out, indent=1))
 print("wrote deck/deck_data.json")
